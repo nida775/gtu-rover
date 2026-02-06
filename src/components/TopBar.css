@@ -1,0 +1,96 @@
+.topbar {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  border-radius: 15px;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.topbar-left {
+  display: flex;
+  gap: 15px;
+}
+
+.control-button {
+  padding: 12px 30px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.start-button {
+  background: #000;
+  color: white;
+}
+
+.start-button:hover:not(:disabled) {
+  background: #333;
+  transform: scale(1.05);
+}
+
+.stop-button {
+  background: #000;
+  color: white;
+}
+
+.stop-button:hover {
+  background: #d32f2f;
+  transform: scale(1.05);
+}
+
+.reset-button {
+  background: #555;
+  color: white;
+}
+
+.reset-button:hover:not(:disabled) {
+  background: #ff9800;
+  transform: scale(1.05);
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.topbar-center {
+  flex: 1;
+  text-align: center;
+}
+
+.title {
+  color: white;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.science-toggle-button {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.science-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
