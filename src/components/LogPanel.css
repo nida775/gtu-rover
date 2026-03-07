@@ -1,0 +1,148 @@
+.log-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clear-logs-button {
+  padding: 6px 12px;
+  background: #1f2937;
+  color: #d1fae5;
+  border: 1px solid #10b981;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.clear-logs-button:hover {
+  background: #065f46;
+  color: #ecfeff;
+}
+
+.log-container {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: #0b1220;
+  border: 1px solid #1e293b;
+}
+
+.no-logs {
+  color: #64748b;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+.log-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 8px;
+  border-left: 2px solid transparent;
+  margin-bottom: 4px;
+  background: #111827;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.log-entry:hover {
+  background: #0f172a;
+}
+
+.log-icon {
+  font-size: 13px;
+  min-width: 16px;
+  flex-shrink: 0;
+}
+
+.log-timestamp {
+  color: #93c5fd;
+  min-width: 76px;
+  font-weight: 600;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.log-message {
+  flex: 1;
+  color: #cbd5e1;
+  word-break: break-word;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.log-info {
+  border-left-color: #38bdf8;
+}
+
+.log-info .log-icon {
+  color: #38bdf8;
+}
+
+.log-success {
+  border-left-color: #22c55e;
+}
+
+.log-success .log-icon {
+  color: #22c55e;
+}
+
+.log-warning {
+  border-left-color: #f59e0b;
+}
+
+.log-warning .log-icon {
+  color: #f59e0b;
+}
+
+.log-error {
+  border-left-color: #ef4444;
+}
+
+.log-error .log-icon {
+  color: #ef4444;
+}
+
+body[data-theme='light'] .clear-logs-button {
+  background: rgba(255, 255, 255, 0.8);
+  color: #2f3641;
+  border-color: rgba(79, 85, 99, 0.35);
+}
+
+body[data-theme='light'] .clear-logs-button:hover {
+  background: rgba(174, 176, 161, 0.42);
+  color: #20252f;
+}
+
+body[data-theme='light'] .log-container {
+  background: rgba(255, 255, 255, 0.76);
+  border-color: rgba(79, 85, 99, 0.24);
+}
+
+body[data-theme='light'] .no-logs {
+  color: #666d75;
+}
+
+body[data-theme='light'] .log-entry {
+  background: rgba(229, 229, 223, 0.65);
+}
+
+body[data-theme='light'] .log-entry:hover {
+  background: rgba(214, 214, 206, 0.75);
+}
+
+body[data-theme='light'] .log-timestamp {
+  color: #41506a;
+}
+
+body[data-theme='light'] .log-message {
+  color: #2c333d;
+}

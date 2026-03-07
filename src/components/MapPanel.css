@@ -1,0 +1,178 @@
+.map-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #8eb4ca;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-dot.connected {
+  background: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
+}
+
+.status-dot.disconnected {
+  background: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+}
+
+.map-view {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #0a1e2f 0%, #0f3047 100%);
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  border-radius: 10px;
+  margin-bottom: 15px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.map-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.map-marker {
+  font-size: 44px;
+  filter: drop-shadow(0 0 8px rgba(111, 255, 125, 0.35));
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.compass-overlay {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 70px;
+  height: 70px;
+  background: rgba(8, 26, 40, 0.95);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.25);
+  border: 2px solid rgba(34, 211, 238, 0.4);
+}
+
+.compass-needle {
+  font-size: 30px;
+  color: #ef4444;
+  transition: transform 0.5s ease;
+}
+
+.compass-direction {
+  position: absolute;
+  bottom: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #a5d7ff;
+}
+
+.sensor-data {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 250px;
+}
+
+.data-row {
+  display: flex;
+  gap: 10px;
+}
+
+.data-item {
+  flex: 1;
+  background: rgba(8, 28, 42, 0.85);
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  padding: 8px 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.data-label {
+  font-size: 11px;
+  color: #8eb4ca;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.data-value {
+  font-size: 13px;
+  color: #a8ffb2;
+  font-weight: 700;
+  font-family: 'Consolas', 'Courier New', monospace;
+  word-break: break-all;
+}
+
+.disconnected-message {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7ca1b7;
+  font-size: 16px;
+}
+
+body[data-theme='light'] .connection-status,
+body[data-theme='light'] .data-label,
+body[data-theme='light'] .disconnected-message {
+  color: #5b6168;
+}
+
+body[data-theme='light'] .map-view {
+  background: linear-gradient(135deg, #ebe9de 0%, #d7d5c9 100%);
+  border-color: rgba(79, 85, 99, 0.24);
+}
+
+body[data-theme='light'] .map-marker {
+  filter: drop-shadow(0 0 6px rgba(48, 53, 67, 0.18));
+}
+
+body[data-theme='light'] .compass-overlay {
+  background: rgba(248, 248, 245, 0.95);
+  box-shadow: 0 0 14px rgba(48, 53, 67, 0.14);
+  border-color: rgba(79, 85, 99, 0.35);
+}
+
+body[data-theme='light'] .compass-direction {
+  color: #3f4652;
+}
+
+body[data-theme='light'] .data-item {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(79, 85, 99, 0.22);
+}
+
+body[data-theme='light'] .data-value {
+  color: #2b313c;
+}

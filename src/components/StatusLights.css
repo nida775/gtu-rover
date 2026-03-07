@@ -1,0 +1,76 @@
+.status-lights {
+  display: flex;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 10px;
+}
+
+.status-light-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-light {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.status-light.active {
+  border-color: white;
+}
+
+.status-light.active.green {
+  background: #4CAF50;
+  box-shadow: 0 0 15px #4CAF50, 0 0 30px rgba(76, 175, 80, 0.5);
+}
+
+.status-light.active.yellow {
+  background: #ffeb3b;
+  box-shadow: 0 0 15px #ffeb3b, 0 0 30px rgba(255, 235, 59, 0.5);
+}
+
+.status-light.active.red {
+  background: #f44336;
+  box-shadow: 0 0 15px #f44336, 0 0 30px rgba(244, 67, 54, 0.5);
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.status-label {
+  font-size: 10px;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+body[data-theme='light'] .status-lights {
+  background: rgba(79, 85, 99, 0.14);
+}
+
+body[data-theme='light'] .status-light {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(79, 85, 99, 0.38);
+}
+
+body[data-theme='light'] .status-light.active {
+  border-color: rgba(48, 53, 67, 0.55);
+}
+
+body[data-theme='light'] .status-label {
+  color: #2f3641;
+}

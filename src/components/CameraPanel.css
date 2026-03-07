@@ -1,0 +1,173 @@
+.camera-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.capture-button {
+  padding: 8px 14px;
+  background: rgba(7, 42, 25, 0.92);
+  color: #8fff9c;
+  border: 1px solid rgba(34, 197, 94, 0.5);
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.capture-button:hover:not(:disabled) {
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.35);
+}
+
+.capture-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.camera-view {
+  width: 100%;
+  aspect-ratio: 4/3;
+  max-height: 60vh;
+  background: linear-gradient(180deg, #08131f 0%, #0b1a28 100%);
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 15px;
+  flex-shrink: 0;
+}
+
+.camera-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.camera-loading,
+.camera-disconnected {
+  color: #85b1cc;
+  font-size: 17px;
+  text-align: center;
+}
+
+.camera-disconnected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.connection-icon {
+  font-size: 46px;
+  opacity: 0.55;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% { opacity: 0.55; }
+  50% { opacity: 0.25; }
+}
+
+.camera-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(191, 253, 211, 0.7);
+  animation: flash 0.2s;
+  pointer-events: none;
+}
+
+@keyframes flash {
+  0% { opacity: 0; }
+  50% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
+
+.photo-gallery {
+  margin-top: 15px;
+  flex-shrink: 0;
+}
+
+.gallery-header {
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #8df89e;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.photo-item {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid rgba(34, 211, 238, 0.26);
+  transition: transform 0.2s ease;
+}
+
+.photo-item:hover {
+  transform: scale(1.04);
+}
+
+.photo-item img {
+  width: 100%;
+  height: 70px;
+  object-fit: cover;
+}
+
+.photo-timestamp {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(6, 16, 24, 0.9);
+  color: #9ceca8;
+  font-size: 8px;
+  padding: 2px;
+  text-align: center;
+}
+
+body[data-theme='light'] .capture-button {
+  background: rgba(227, 240, 230, 0.95);
+  color: #1f5939;
+  border-color: rgba(45, 108, 68, 0.38);
+}
+
+body[data-theme='light'] .capture-button:hover:not(:disabled) {
+  box-shadow: 0 0 10px rgba(45, 108, 68, 0.2);
+}
+
+body[data-theme='light'] .camera-view {
+  background: linear-gradient(180deg, #ecebe5 0%, #dcdacc 100%);
+  border-color: rgba(79, 85, 99, 0.24);
+}
+
+body[data-theme='light'] .camera-loading,
+body[data-theme='light'] .camera-disconnected {
+  color: #555c64;
+}
+
+body[data-theme='light'] .camera-flash {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+body[data-theme='light'] .gallery-header {
+  color: #2d3440;
+}
+
+body[data-theme='light'] .photo-item {
+  border-color: rgba(79, 85, 99, 0.24);
+}
+
+body[data-theme='light'] .photo-timestamp {
+  background: rgba(48, 53, 67, 0.82);
+  color: #f2f2f2;
+}

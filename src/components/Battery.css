@@ -1,0 +1,69 @@
+.battery-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(8, 28, 42, 0.82);
+  border: 1px solid rgba(34, 211, 238, 0.32);
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.battery-frame {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.battery-level-bg {
+  width: 54px;
+  height: 24px;
+  border: 2px solid rgba(125, 211, 252, 0.75);
+  border-radius: 5px;
+  padding: 2px;
+  background: rgba(5, 17, 27, 0.95);
+  box-shadow: inset 0 0 8px rgba(34, 211, 238, 0.15);
+}
+
+.battery-level {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.35s ease, background 0.3s ease;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.battery-tip {
+  width: 4px;
+  height: 10px;
+  background: rgba(125, 211, 252, 0.85);
+  border-radius: 0 2px 2px 0;
+  margin-left: 2px;
+}
+
+.battery-percentage {
+  font-size: 16px;
+  font-weight: 700;
+  min-width: 48px;
+  text-align: right;
+  text-shadow: 0 0 10px currentColor;
+  font-family: 'Consolas', 'Source Code Pro', 'Courier New', monospace;
+}
+
+body[data-theme='light'] .battery-container {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(79, 85, 99, 0.3);
+}
+
+body[data-theme='light'] .battery-level-bg {
+  border-color: rgba(79, 85, 99, 0.45);
+  background: rgba(238, 238, 232, 0.92);
+  box-shadow: inset 0 0 8px rgba(79, 85, 99, 0.12);
+}
+
+body[data-theme='light'] .battery-tip {
+  background: rgba(79, 85, 99, 0.55);
+}
+
+body[data-theme='light'] .battery-level,
+body[data-theme='light'] .battery-percentage {
+  text-shadow: none;
+}

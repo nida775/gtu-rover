@@ -1,0 +1,207 @@
+.topbar {
+  background: linear-gradient(90deg, rgba(6, 22, 34, 0.95), rgba(8, 28, 42, 0.95));
+  border-radius: 14px;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(34, 211, 238, 0.3);
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.12);
+}
+
+.topbar-left {
+  display: flex;
+  gap: 10px;
+}
+
+.control-button {
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: 1px solid transparent;
+}
+
+.start-button {
+  background: rgba(10, 40, 24, 0.9);
+  color: #8cff9a;
+  border-color: rgba(34, 197, 94, 0.45);
+}
+
+.start-button:hover:not(:disabled) {
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.35);
+}
+
+.stop-button {
+  background: rgba(53, 15, 24, 0.9);
+  color: #ff98a4;
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.stop-button:hover:not(:disabled) {
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+}
+
+.reset-button {
+  background: rgba(56, 32, 9, 0.92);
+  color: #ffd37a;
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+.reset-button:hover:not(:disabled) {
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+}
+
+.control-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.topbar-center {
+  flex: 1;
+  text-align: center;
+}
+
+.title {
+  display: inline-block;
+  color: #78ff84;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-shadow: 0 0 14px rgba(111, 255, 125, 0.45);
+  font-family: 'Consolas', 'Source Code Pro', 'Courier New', monospace;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-icon-button {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(34, 211, 238, 0.34);
+  background: rgba(9, 28, 42, 0.9);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-icon-button:hover {
+  border-color: rgba(111, 255, 125, 0.7);
+  box-shadow: 0 0 12px rgba(34, 211, 238, 0.2);
+}
+
+.theme-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.theme-icon-button.is-dark .theme-icon {
+  background: #f8e57a;
+  box-shadow: 0 0 0 3px rgba(248, 229, 122, 0.18);
+}
+
+.theme-icon-button.is-light .theme-icon {
+  background: #d4dcf7;
+  box-shadow: inset -5px 0 0 #23314a;
+}
+
+.title-typing {
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+  animation:
+    title-typing 1.6s steps(12, end) 0.2s forwards,
+    title-caret 0.8s step-end 0.2s 4,
+    title-caret-hide 0s linear 3.4s forwards,
+    title-unclip 0s linear 3.4s forwards;
+  border-right: 2px solid rgba(120, 255, 132, 0.9);
+}
+
+@keyframes title-typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 12ch;
+  }
+}
+
+@keyframes title-caret {
+  0%, 100% {
+    border-right-color: rgba(120, 255, 132, 0.9);
+  }
+  50% {
+    border-right-color: transparent;
+  }
+}
+
+@keyframes title-caret-hide {
+  to {
+    border-right-color: transparent;
+  }
+}
+
+@keyframes title-unclip {
+  to {
+    width: auto;
+    overflow: visible;
+  }
+}
+
+body[data-theme='light'] .topbar {
+  background: linear-gradient(90deg, rgba(183, 175, 146, 0.5), rgba(255, 255, 255, 0.78));
+  border-color: rgba(48, 53, 67, 0.22);
+  box-shadow: 0 0 20px rgba(48, 53, 67, 0.12);
+}
+
+body[data-theme='light'] .start-button {
+  background: rgba(204, 234, 213, 0.9);
+  color: #1d5a36;
+  border-color: rgba(34, 122, 73, 0.35);
+}
+
+body[data-theme='light'] .stop-button {
+  background: rgba(251, 215, 219, 0.92);
+  color: #9f2635;
+  border-color: rgba(177, 37, 55, 0.32);
+}
+
+body[data-theme='light'] .reset-button {
+  background: rgba(247, 234, 201, 0.95);
+  color: #7c5a17;
+  border-color: rgba(162, 117, 34, 0.35);
+}
+
+body[data-theme='light'] .title {
+  color: #303543;
+  text-shadow: none;
+}
+
+body[data-theme='light'] .title-typing {
+  border-right-color: rgba(48, 53, 67, 0.8);
+}
+
+body[data-theme='light'] .theme-icon-button {
+  border-color: rgba(48, 53, 67, 0.3);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+body[data-theme='light'] .theme-icon-button:hover {
+  border-color: rgba(48, 53, 67, 0.55);
+  box-shadow: 0 0 12px rgba(48, 53, 67, 0.15);
+}
