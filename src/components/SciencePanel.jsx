@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ROSLIB from 'roslib';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import './SciencePanel.css';
 
-function SciencePanel({ rosConnected,ros  }) {
+function SciencePanel({ rosConnected, ros }) {
   const [sensorData, setSensorData] = useState([]);
   const [selectedSensors, setSelectedSensors] = useState(['temperature', 'humidity', 'pressure']);
   const [currentReadings, setCurrentReadings] = useState({
@@ -15,14 +15,71 @@ function SciencePanel({ rosConnected,ros  }) {
     conductivity: 0
   });
 
-  const sensorConfig = {
-    temperature: { name: 'Sıcaklık', unit: '°C', color: '#ff6384', min: 0, max: 50, topic: '/temperature' },
-    humidity: { name: 'Nem', unit: '%', color: '#36a2eb', min: 0, max: 100, topic: '/humidity' },
-    pressure: { name: 'Basınç', unit: 'hPa', color: '#4bc0c0', min: 900, max: 1100, topic: '/pressure' },
-    co2: { name: 'CO₂', unit: 'ppm', color: '#ff9f40', min: 300, max: 1000, topic: '/co2' },
-    ph: { name: 'pH', unit: '', color: '#9966ff', min: 0, max: 14, topic: '/ph' },
-    conductivity: { name: 'İletkenlik', unit: 'µS/cm', color: '#ffcd56', min: 0, max: 2000, topic: '/conductivity' }
-  };
+  // sensorConfig'i useMemo ile sarmalayarak her render'da yeniden oluşmasını engelle
+  const sensorConfig = useMemo(() => ({
+    temperature: { 
+      name: 'Sıcaklık', 
+      unit: '°C', 
+      color: '#ff6384', 
+      min: 0, 
+      max: 50, 
+      topic: '/sensor/temperature',
+      messageType: 'sensor_msgs/Temperature'
+    },
+    humidity: { 
+      name: 'Nem', 
+      unit: '%', 
+      color: '#36a2eb', 
+      min: 0, 
+      max: 100, 
+      topic: '/sensor/humidity',
+      messageType: 'sensor_msgs/RelativeHumidity'
+    },
+    pressure: { 
+      name: 'Basınç', 
+      unit: 'hPa', 
+      color: '#4bc0c0', 
+      min: 900, 
+      max: 1100, 
+      topic: '/sensor/pressure',
+      messageType: 'sensor_msgs/FluidPressure'
+    },
+    co2: { 
+      name: 'CO₂', 
+      unit: 'ppm', 
+      color: '#ff9f40', 
+      min: 300, 
+      max: 1000, 
+      topic: '/sensor/co2',
+      messageType: 'std_msgs/Float32'
+    },
+    ph: { 
+      name: 'pH', 
+      unit: '', 
+      color: '#9966ff', 
+      min: 0, 
+      max: 14, 
+      topic: '/sensor/ph',
+      messageType: 'std_msgs/Float32'
+    },
+    conductivity: { 
+      name: 'İletkenlik', 
+      unit: 'µS/cm', 
+      color: '#ffcd56', 
+      min: 0, 
+      max: 2000, 
+      topic: '/sensor/conductivity',
+      messageType: 'std_msgs/Float32'
+    }
+  }), []); // Boş array = sadece bir kere oluşturulur
+
+  // currentReadings için ref kullan (veri kaydetme için)
+  const currentReadingsRef = useRef(currentReadings);
+  
+  // Her currentReadings değiştiğinde ref'i güncelle
+  useEffect(() => {
+    currentReadingsRef.current = currentReadings;
+  }, [currentReadings]);
 
   useEffect(() => {
     if (!rosConnected || !ros) return;
@@ -35,12 +92,23 @@ function SciencePanel({ rosConnected,ros  }) {
       
       const listener = new ROSLIB.Topic({
         ros: ros,
-        name: config.topic, // TOPIC ADLARINI KENDİ SİSTEMİNİZE GÖRE DEĞİŞTİRİN
-        messageType: 'std_msgs/Float32' // veya 'sensor_msgs/Temperature' vb.
+        name: config.topic,
+        messageType: config.messageType
       });
 
       listener.subscribe((message) => {
-        const value = message.data || message.temperature || 0;
+        let value = 0;
+        
+        // Message type'a göre veriyi çıkar
+        if (config.messageType === 'sensor_msgs/Temperature') {
+          value = message.temperature;
+        } else if (config.messageType === 'sensor_msgs/RelativeHumidity') {
+          value = message.relative_humidity * 100; // 0-1 → 0-100%
+        } else if (config.messageType === 'sensor_msgs/FluidPressure') {
+          value = message.fluid_pressure / 100; // Pa → hPa
+        } else if (config.messageType === 'std_msgs/Float32') {
+          value = message.data;
+        }
         
         setCurrentReadings(prev => ({
           ...prev,
@@ -56,12 +124,12 @@ function SciencePanel({ rosConnected,ros  }) {
     const dataInterval = setInterval(() => {
       const newData = {
         timestamp: new Date().toLocaleTimeString('tr-TR'),
-        ...currentReadings
+        ...currentReadingsRef.current // ref kullan
       };
 
       setSensorData(prev => {
         const updated = [...prev, newData];
-        return updated.slice(-20); // Son 20 veriyi tutar . Eğer tüm verileri tutmak istiyorsanız bu satırı kaldırabilirsiniz
+        return updated.slice(-20); // Son 20 veriyi tut
       });
     }, 1000);
 
@@ -70,7 +138,7 @@ function SciencePanel({ rosConnected,ros  }) {
       Object.values(listeners).forEach(listener => listener.unsubscribe());
       clearInterval(dataInterval);
     };
-  }, [rosConnected, ros]);
+  }, [rosConnected, ros, sensorConfig]); // ✅ Artık sensorConfig dahil
 
   const toggleSensor = (sensor) => {
     setSelectedSensors(prev =>
