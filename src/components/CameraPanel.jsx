@@ -1,41 +1,120 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './CameraPanel.css';
+import React, { useState, useEffect } from 'react';
 import ROSLIB from 'roslib';
+import './CameraPanel.css';
 
-//ros ibaresini ekledim
-function CameraPanel({ rosConnected, ros }) {
+function CameraPanel({ rosConnected, ros, roverNamespace = 'rover1' }) {
   const [cameraFeed, setCameraFeed] = useState(null);
   const [photos, setPhotos] = useState([]);
-  const canvasRef = useRef(null);
+  const [laserOn, setLaserOn] = useState(false);
 
-  // ROSBridge'den kamera görüntüsü almak için
+  // Gimbal topic referansı
+  const gimbalTopicRef = React.useRef(null);
+
+  // Gimbal topic'i oluştur
+  useEffect(() => {
+    if (!rosConnected || !ros) return;
+
+    gimbalTopicRef.current = new ROSLIB.Topic({
+      ros: ros,
+      name: `/${roverNamespace}/gimbal_cmd`,
+      messageType: 'std_msgs/String'
+    });
+    // Gimbal topic'ini ROS'a kaydet
+
+    console.log(`📡 Gimbal topic hazır: /${roverNamespace}/gimbal_cmd`);
+
+    return () => {
+      if (gimbalTopicRef.current) {
+        gimbalTopicRef.current.unadvertise();
+      }
+    };
+  }, [rosConnected, ros, roverNamespace]);
+
+  // Kamera topic'inden görüntü al
   useEffect(() => {
     if (!rosConnected || !ros) {
       setCameraFeed(null);
       return;
     }
 
-    // Kamera topic'i - TOPIC ADINI KENDİ SİSTEMİNİZE GÖRE DEĞİŞTİRİN
     const cameraListener = new ROSLIB.Topic({
       ros: ros,
-      name: '/camera/image_raw/compressed', // veya '/camera/rgb/image_raw/compressed'
+      name: `/${roverNamespace}/camera/compressed`,
       messageType: 'sensor_msgs/CompressedImage'
     });
+    // Kamera topic'ine abone ol ve gelen görüntüyü base64 formatına çevirerek state'e kaydet
 
     cameraListener.subscribe((message) => {
-      // Base64 görüntüyü decode et
       const imageData = 'data:image/jpeg;base64,' + message.data;
       setCameraFeed(imageData);
     });
 
-    console.log('📷 Kamera topic\'ine abone olundu');
+    console.log(`📷 Kamera topic'ine abone olundu: /${roverNamespace}/camera/compressed`);
 
     return () => {
       cameraListener.unsubscribe();
     };
-  }, [rosConnected, ros]);
+  }, [rosConnected, ros, roverNamespace]);
 
+  // Gimbal komutu gönder
+  const sendGimbalCommand = (command) => {
+    if (!rosConnected || !gimbalTopicRef.current) {
+      console.warn('ROS bağlantısı yok veya gimbal topic hazır değil');
+      return;
+    }
+
+    const msg = new ROSLIB.Message({ data: command });
+    gimbalTopicRef.current.publish(msg);
+    console.log('Gimbal komutu gönderildi:', command);
+  };
+
+  // Klavye kontrolü
+  useEffect(() => {
+    if (!rosConnected) return;
+
+    const handleKeyDown = (event) => {
+      // Eğer input/textarea içindeyse klavye kontrolünü devre dışı bırak
+      if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      switch(event.key) {
+        case 'ArrowUp':
+          event.preventDefault();
+          sendGimbalCommand('w');
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          sendGimbalCommand('s');
+          break;
+        case 'ArrowLeft':
+          event.preventDefault();
+          sendGimbalCommand('a');
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          sendGimbalCommand('d');
+          break;
+        case 'l':
+        case 'L':
+          event.preventDefault();
+          setLaserOn(prev => !prev);
+          sendGimbalCommand('l');
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [rosConnected]);
+
+  // Fotoğraf çek
   const takePhoto = () => {
+    if (!cameraFeed) return;
+
     const timestamp = new Date().toLocaleString('tr-TR');
     const photo = {
       id: Date.now(),
@@ -46,12 +125,15 @@ function CameraPanel({ rosConnected, ros }) {
     setPhotos([photo, ...photos]);
     
     // Flash efekti
-    const flash = document.createElement('div');
-    flash.className = 'camera-flash';
-    document.querySelector('.camera-view').appendChild(flash);
-    setTimeout(() => flash.remove(), 200);
+    const cameraView = document.querySelector('.camera-view');
+    if (cameraView) {
+      const flash = document.createElement('div');
+      flash.className = 'camera-flash';
+      cameraView.appendChild(flash);
+      setTimeout(() => flash.remove(), 200);
+    }
     
-    console.log('Fotoğraf çekildi:', timestamp);
+    console.log('📸 Fotoğraf çekildi:', timestamp);
   };
 
   return (
