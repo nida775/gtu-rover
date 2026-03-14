@@ -262,6 +262,7 @@ function App() {
       const ros= new ROSLIB.Ros({
         url: Ros_Url
       });
+      //ROSLIB.ros creates and manages a WebSocket connection to the ROS bridge server. The url parameter specifies the address of the ROS bridge server, which is typically running on the same machine as the web application or on a reachable network address. Once the connection is established, the ros object can be used to interact with ROS topics, services, and parameters. It also provides event handlers for connection status, allowing the application to respond to successful connections, errors, and disconnections appropriately.
 
       ros.on('connection', () =>{
         console.log("Connected to Rosbridge");
