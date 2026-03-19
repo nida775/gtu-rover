@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import ROSLIB from 'roslib';
+import { WebrtcSer} from './WebrtcSer';
 import './CameraPanel.css';
 
 function CameraPanel({ rosConnected, ros, roverNamespace = 'rover1' }) {
-  const [cameraFeed, setCameraFeed] = useState(null);
+  
   const [photos, setPhotos] = useState([]);
   const [laserOn, setLaserOn] = useState(false);
-
+  const jetson_IP = '192.168.1.65'; // Jetson cihazınızın IP adresini buraya yazın
+  const streamUrl = `http://${jetson_IP}:1984/api/webrtc?src=rover_camera`; // WebRTC stream URL'si
+  const { videoRef, status } = WebrtcSer(streamUrl); // WebRTC bağlantı durumunu alın
+  
   // Gimbal topic referansı
   const gimbalTopicRef = React.useRef(null);
 
@@ -21,40 +25,39 @@ function CameraPanel({ rosConnected, ros, roverNamespace = 'rover1' }) {
     });
     // Gimbal topic'ini ROS'a kaydet
 
-    console.log(`📡 Gimbal topic hazır: /${roverNamespace}/gimbal_cmd`);
+    const handkeydownListener = (event) => {
+      // Eğer input/textarea içindeyse klavye kontrolünü devre dışı bırak
+      if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      else if (event.key === 'l' || event.key === 'L') {
+        setLaserOn(prev => !prev);
+        const msg = new ROSLIB.Message({ data: 'lazer' });
+        gimbalTopicRef.current.publish(msg);
+        console.log('Lazer komutu gönderildi:', !laserOn ? 'açıldı' : 'kapandı');
+      }
+      else if (['w', 'a', 's', 'd', 'W', 'A', 'S', 'D'].includes(event.key)) {
+        const cmd = event.key.toLowerCase();
+        const msg = new ROSLIB.Message({ data: cmd });
+        gimbalTopicRef.current.publish(msg);
+        console.log('Gimbal komutu gönderildi:', cmd);
+      }
+    };
+
+    window.addEventListener('keydown', handkeydownListener);
 
     return () => {
+      window.removeEventListener('keydown', handkeydownListener);
       if (gimbalTopicRef.current) {
-        gimbalTopicRef.current.unadvertise();
+        gimbalTopicRef.current.unadvertise(); // Gimbal topic'ini ROS'tan kaldır
+        gimbalTopicRef.current = null;
       }
     };
   }, [rosConnected, ros, roverNamespace]);
 
-  // Kamera topic'inden görüntü al
-  useEffect(() => {
-    if (!rosConnected || !ros) {
-      setCameraFeed(null);
-      return;
-    }
-
-    const cameraListener = new ROSLIB.Topic({
-      ros: ros,
-      name: `/${roverNamespace}/camera/compressed`,
-      messageType: 'sensor_msgs/CompressedImage'
-    });
-    // Kamera topic'ine abone ol ve gelen görüntüyü base64 formatına çevirerek state'e kaydet
-
-    cameraListener.subscribe((message) => {
-      const imageData = 'data:image/jpeg;base64,' + message.data;
-      setCameraFeed(imageData);
-    });
-
-    console.log(`📷 Kamera topic'ine abone olundu: /${roverNamespace}/camera/compressed`);
-
-    return () => {
-      cameraListener.unsubscribe();
-    };
-  }, [rosConnected, ros, roverNamespace]);
+  // Kamera topic'inden görüntü al . eski versiyon useffect ileydi sildim.
+  
 
   // Gimbal komutu gönder
   const sendGimbalCommand = (command) => {
@@ -145,36 +148,35 @@ function CameraPanel({ rosConnected, ros, roverNamespace = 'rover1' }) {
         </button>
       </div>
       
-      <div className="panel-content">
-        <div className="camera-view">
-          {rosConnected ? (
-            cameraFeed ? (
-              <img src={cameraFeed} alt="Camera Feed" className="camera-image" />
-            ) : (
-              <div className="camera-loading">Kamera yükleniyor...</div>
-            )
-          ) : (
-            <div className="camera-disconnected">
-              <div className="connection-icon">📡</div>
-              <div>ROS Bağlantısı Bekleniyor...</div>
-            </div>
-          )}
-        </div>
-        
-        {photos.length > 0 && (
-          <div className="photo-gallery">
-            <div className="gallery-header">Çekilen Fotoğraflar ({photos.length})</div>
-            <div className="photo-grid">
-              {photos.map(photo => (
-                <div key={photo.id} className="photo-item">
-                  <img src={photo.image} alt="Captured" />
-                  <div className="photo-timestamp">{photo.timestamp}</div>
-                </div>
-              ))}
-            </div>
+      <div className="camera-video-container">
+        <video ref={videoRef} autoPlay playsInline muted  className='camera-view'/>
+        {status !== 'streaming' && (
+          <div className="loading-overlay">
+            <div className="spinner"></div>
+            <p>
+              {status === 'connecting' && 'Kameraya bağlanılıyor...'}
+              {status === 'connected' && 'Video bekleniyor...'}
+              {status === 'disconnected' && 'Kamera bağlantısı yok'}
+              {status === 'failed' && 'Bağlantı başarısız! go2rtc çalışıyor mu?'}
+              {status === 'error' && 'Hata oluştu. Console\'u kontrol edin.'}
+            </p>
           </div>
         )}
       </div>
+      
+      {photos.length > 0 && (
+        <div className="photo-gallery">
+          <div className="gallery-header">Çekilen Fotoğraflar ({photos.length})</div>
+          <div className="photo-grid">
+            {photos.map(photo => (
+              <div key={photo.id} className="photo-item">
+                <img src={photo.image} alt="Captured" />
+                <div className="photo-timestamp">{photo.timestamp}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
