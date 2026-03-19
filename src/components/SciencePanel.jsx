@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, use } from 'react';
 import ROSLIB from 'roslib';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import './SciencePanel.css';
@@ -13,19 +13,21 @@ import './SciencePanel.css';
 //ros=ROSLIB.Ros nesnesi (App.jsx'te), ROS bağlantısını temsil eder . Creates and manages a WebSocket connection to the ROS bridge server. 
 function SciencePanel({ rosConnected, ros }) {
   const [sensorData, setSensorData] = useState([]);
-  const [selectedSensors, setSelectedSensors] = useState(['temperature', 'humidity', 'pressure','gas_data','ph','co2','weight']);
+  const [selectedSensors, setSelectedSensors] = useState(['temperature', 'nemval1', 'nemval2', 'pressure','mq4','mq7', 'co2','weight1','weight2']);
   // selectedSensors: kullanıcı tarafından grafik ve tabloda gösterilmek istenen sensörlerin listesi
   // sensorData: her saniye güncellenen ve son 20 ölçümü tutan dizi, grafik ve tabloda görselleştirilir
   // currentReadings: her sensörün en son değerini tutar, ROS topic'lerinden gelen verilerle güncellenir
   const [currentReadings, setCurrentReadings] = useState({
-    temperature: 0,
-    humidity: 0,
-    pressure: 0,
-    co2: 0,
-    ph: 7.00,
-    weight: {w1: 0, w2: 0},
-    gas_data: {mq4: 0, mq7: 0}
-  });
+  temperature: 0,
+  nemval1: 0,   // Match sensorConfig
+  nemval2: 0,   // Match sensorConfig
+  pressure: 0,
+  co2: 0,
+  mq4: 0,       // Match sensorConfig
+  mq7: 0,       // Match sensorConfig
+  weight1: 0,   // Match sensorConfig
+  weight2: 0    // Match sensorConfig
+});
 
   // sensorConfig'i useMemo ile sarmalayarak her render'da yeniden oluşmasını engelle
   const sensorConfig = useMemo(() => ({
@@ -38,16 +40,28 @@ function SciencePanel({ rosConnected, ros }) {
       topic: '/sensor/temperature',
       messageType: 'sensor_msgs/Temperature'
     },
-    humidity: { 
-      name: 'Nem', 
+    nemval1: { 
+      name: 'Nem 1', 
       unit: '%', 
       color: '#36a2eb', 
       min: 0, 
       max: 100, 
-      topic: '/sensor/humidity',
-      messageType: 'sensor_msgs/RelativeHumidity'
+      topic: '/sensor/humidity1',
+      messageType: 'sensor_msgs/RelativeHumidity',
+      
     },
-    pressure: { 
+    nemval2: { 
+      name: 'Nem 2', 
+      unit: '%', 
+      color: '#4bc0c0', 
+      min: 0, 
+      max: 100, 
+      topic: '/sensor/humidity2',
+      messageType: 'sensor_msgs/RelativeHumidity',
+      
+    },
+    
+    /*pressure: { 
       name: 'Basınç', 
       unit: 'hPa', 
       color: '#4bc0c0', 
@@ -55,7 +69,7 @@ function SciencePanel({ rosConnected, ros }) {
       max: 1100, 
       topic: '/sensor/pressure',
       messageType: 'sensor_msgs/FluidPressure'
-    },
+    },*/
     co2: { 
       name: 'CO₂', 
       unit: 'ppm', 
@@ -65,21 +79,13 @@ function SciencePanel({ rosConnected, ros }) {
       topic: '/sensor/co2',
       messageType: 'std_msgs/Float32'
     },
-    ph: { 
-      name: 'pH', 
-      unit: '', 
-      color: '#9966ff', 
-      min: 0, 
-      max: 14, 
-      topic: '/sensor/ph',
-      messageType: 'std_msgs/Float32'
-    },
+    
     mq4: { 
       name: 'MQ4', 
       unit: 'V', 
       color: '#ffcd56', 
       min: 0, 
-      max: 5, 
+      max: 4095, 
       topic: '/sensor/gas_data',
       messageType: 'std_msgs/Float32MultiArray',
       index: 0 // MQ4 verisi, Float32MultiArray mesajının 0. indeksinde
@@ -89,7 +95,7 @@ function SciencePanel({ rosConnected, ros }) {
       unit: 'V', 
       color: '#ff9f40', 
       min: 0, 
-      max: 5, 
+      max: 4095, 
       topic: '/sensor/gas_data',
       messageType: 'std_msgs/Float32MultiArray',
       index: 1 // MQ7 verisi, Float32MultiArray mesajının 1. indeksinde
@@ -99,8 +105,8 @@ function SciencePanel({ rosConnected, ros }) {
       unit: 'kg',
       color: '#36a2eb',
       min: 0,
-      max: 100,
-      topic: '/sensor/weight1',
+      max: 1000,
+      topic: '/sensor/weight',
       messageType: 'std_msgs/Float32MultiArray',
       index: 0 // Weight 1 verisi, Float32MultiArray mesajının 0. indeksinde
     },
@@ -109,8 +115,8 @@ function SciencePanel({ rosConnected, ros }) {
       unit: 'kg',
       color: '#4bc0c0',
       min: 0,
-      max: 100,
-      topic: '/sensor/weight2',
+      max: 1000,
+      topic: '/sensor/weight',
       messageType: 'std_msgs/Float32MultiArray',
       index: 1 // Weight 2 verisi, Float32MultiArray mesajının 1. indeksinde
     }
@@ -130,10 +136,15 @@ function SciencePanel({ rosConnected, ros }) {
     //connection var mı? yoksa işlemi yapma
 
     const listeners = {};
-
+    const subscribedTopics = new Set();
     // Her sensör için topic oluştur
     Object.keys(sensorConfig).forEach(sensorKey => {
       const config = sensorConfig[sensorKey];
+
+      if (subscribedTopics.has(config.topic)) {
+        console.warn(`⚠️ ${config.name} için ${config.topic} topic'ine zaten abone olundu, atlanıyor.`);
+        return;
+      }
       
       const listener = new ROSLIB.Topic({
         ros: ros,
@@ -150,33 +161,38 @@ function SciencePanel({ rosConnected, ros }) {
     → fires ros.on('error', ...)    when something breaks
     → fires ros.on('close', ...)    when disconnected*/
       listener.subscribe((message) => {
-        let value = 0;
+        let values = {};
         //subscribe fonksiyonu, ROS topic'inden gelen mesajları dinler ve her yeni mesaj geldiğinde çalışır. Gelen mesajın türüne göre (örneğin sıcaklık, nem, basınç) ilgili değeri çıkarır ve currentReadings state'ini günceller. Böylece, bileşen her zaman sensörlerin en son değerlerini gösterir.
         // Message type'a göre veriyi çıkar
         if (config.messageType === 'sensor_msgs/Temperature') {
-          value = message.temperature;
+          values[sensorKey] = message.temperature; //sensorKey, sensorConfig'daki key'e karşılık gelir (örneğin 'temperature', 'nemval1')
         } else if (config.messageType === 'sensor_msgs/RelativeHumidity') {
-          value = message.relative_humidity * 100; // 0-1 → 0-100%
+          values[sensorKey] = message.relative_humidity * 100; // 0-1 → 0-100%
         } else if (config.messageType === 'sensor_msgs/FluidPressure') {
-          value = message.fluid_pressure / 100; // Pa → hPa
+          values[sensorKey] = message.fluid_pressure / 100; // Pa → hPa
         } else if (config.messageType === 'std_msgs/Float32') {
-          value = message.data;
-        } else if (config.messageType === 'std_msgs/Float32MultiArray') {
-          const idx = config.index !== undefined ? config.index : 0;
-          if (message.data && message.data.length > idx) {
-            value = message.data[idx];
-          } else {            console.warn(`⚠️ ${config.name} topic'inden beklenen veri gelmedi:`, message);
-          }
+          values[sensorKey] = message.data;
+        } 
+        else if (config.messageType === 'std_msgs/Float32MultiArray') {
+          Object.keys(sensorConfig).forEach(key => {
+            const cfg = sensorConfig[key];
+            if (cfg.topic === config.topic && cfg.index !== undefined) {
+              if (message.data && message.data.length > cfg.index) {
+                values[key] = message.data[cfg.index];
+              }
+            }
+          });
         }
         
         setCurrentReadings(prev => ({
           ...prev,
-          [sensorKey]: value
+          ...values 
         }));
       });
       // currentReadings state'i, ROS topic'lerinden gelen verilerle güncellenir
 
-      listeners[sensorKey] = listener;
+      listeners[config.topic] = listener;
+      subscribedTopics.add(config.topic);
       console.log(`📊 ${config.name} topic'ine abone olundu:`, config.topic);
     });
 
@@ -201,6 +217,36 @@ function SciencePanel({ rosConnected, ros }) {
     };
   }, [rosConnected, ros, sensorConfig]); // ✅ Artık sensorConfig dahil
   // clenaup function'ı, bileşen unmount olduğunda veya rosConnected/ros/sensorConfig değiştiğinde çalışır. ROS topic aboneliklerini iptal eder ve veri kaydetme interval'ini temizler.
+  useEffect(() => {
+    if (!rosConnected || !ros) return;
+    const startCommandTopic = new ROSLIB.Topic({
+      ros: ros,
+      name: '/sensor/command',
+      messageType: 'std_msgs/String'
+    });
+
+    const handkeydownListener = (event) => {
+      if (event.key === 'q' || event.key === 'Q') {
+        const msg = new ROSLIB.Message({ data: 'start' });
+        startCommandTopic.publish(msg);
+        console.log('Start command sent to ROS.');
+      }
+      else if (event.key === 'x' || event.key === 'X') {
+        const msg = new ROSLIB.Message({ data: 'stop' });
+        startCommandTopic.publish(msg);
+        console.log('Stop command sent to ROS.');
+      }
+     //dara kısmını atlıyorum şunalık çünkü dara için hazne de seçilmesi lazım.
+    };
+
+    window.addEventListener('keydown', handkeydownListener);
+
+    return () => {
+      window.removeEventListener('keydown', handkeydownListener);
+    };
+  }, [rosConnected, ros]);
+  // Kullanıcı 's' tuşuna bastığında, ROS'a bir "start" komutu gönderilir. Bu, sensörlerin veri göndermeye başlaması için kullanılabilir.
+
 
   const toggleSensor = (sensor) => {
     setSelectedSensors(prev =>
@@ -248,7 +294,7 @@ function SciencePanel({ rosConnected, ros }) {
           >
             <div className="reading-name">{config.name}</div>
             <div className="reading-value" style={{ color: config.color }}>
-              {currentReadings[key].toFixed(2)}
+              {(currentReadings[key] ?? 0).toFixed(2)}
             </div>
             <div className="reading-unit">{config.unit}</div>
           </div>
@@ -260,15 +306,16 @@ function SciencePanel({ rosConnected, ros }) {
         <div className="chart-header">
           <h3>Zaman Serisi Grafiği</h3>
           <div className="chart-legend">
-            {selectedSensors.map(sensor => (
-              <span key={sensor} className="legend-item">
-                <span
-                  className="legend-color"
-                  style={{ background: sensorConfig[sensor].color }}
-                ></span>
-                {sensorConfig[sensor].name}
-              </span>
-            ))}
+            {selectedSensors.map(sensor => {
+              const config = sensorConfig[sensor];
+              if (!config) return null; // Skip if the sensor key doesn't exist in config
+              return (
+                <span key={sensor} className="legend-item">
+                  <span className="legend-color" style={{ background: config.color }}></span>
+                  {config.name}
+                </span>
+              );
+            })}
           </div>
         </div>
         
@@ -327,7 +374,7 @@ function SciencePanel({ rosConnected, ros }) {
                 <tr key={index}>
                   <td>{row.timestamp}</td>
                   {selectedSensors.map(sensor => (
-                    <td key={sensor}>{row[sensor].toFixed(2)}</td>
+                    <td key={sensor}>{(row[sensor] ?? 0).toFixed(2)}</td>
                   ))}
                 </tr>
               ))}
@@ -338,6 +385,9 @@ function SciencePanel({ rosConnected, ros }) {
     </div>
   );
 }
+
+
+export default SciencePanel;
 
 
 export default SciencePanel;
