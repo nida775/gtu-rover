@@ -24,8 +24,7 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
-
-.camera-view {
+.camera-video-container {
   width: 100%;
   aspect-ratio: 4/3;
   max-height: 60vh;
@@ -36,9 +35,14 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  position: relative;
+  position: relative;  /* ← Bu önemli (overlay'ler için) */
   margin-bottom: 15px;
   flex-shrink: 0;
+}
+.camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;  /* Video oranını koru */
 }
 
 .camera-image {
@@ -66,7 +70,36 @@
   opacity: 0.55;
   animation: blink 2s infinite;
 }
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #08131f 0%, #0b1a28 100%);
+  color: #22d3ee;
+  z-index: 5;
+}
 
+.spinner {
+  border: 4px solid rgba(34, 211, 238, 0.2);
+  border-top: 4px solid #22d3ee;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.loading-overlay p {
+  color: #22d3ee;
+  font-size: 14px;
+  margin: 8px 0;
+}
 @keyframes blink {
   0%,
   100% { opacity: 0.55; }
@@ -166,6 +199,12 @@ body[data-theme='light'] .gallery-header {
 body[data-theme='light'] .photo-item {
   border-color: rgba(79, 85, 99, 0.24);
 }
+
+body[data-theme='light'] .photo-timestamp {
+  background: rgba(48, 53, 67, 0.82);
+  color: #f2f2f2;
+}
+
 
 body[data-theme='light'] .photo-timestamp {
   background: rgba(48, 53, 67, 0.82);
