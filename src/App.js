@@ -779,8 +779,10 @@ function App() {
   //rosRef.current ekledim
   const renderTabBody = (tabId) => {
     if (tabId === 'camera') {
-      return <CameraPanel ros={rosRef.current} rosConnected={rosConnected} />;
+      return <CameraPanel ros={rosRef.current} rosConnected={rosConnected}  />;
     }
+    if (tabId== 'science')
+      return <SciencePanel ros={rosRef.current} rosConnected={rosConnected} />;
     if (tabId === 'map') {
       return <MapPanel ros={rosRef.current} rosConnected={rosConnected} />;
     }
@@ -824,13 +826,13 @@ function App() {
             );
           })}
 
-          {!scienceMode && <button className="tab-tool" onClick={tileVisibleTabs}>Pencere Hizala</button>}
-          {!scienceMode && <button className="tab-tool ghost" onClick={resetLayout}>Varsayilan</button>}
+          {!scienceMode && <button className="tab-tool" onClick={tileVisibleTabs}>Window Align</button>}
+          {!scienceMode && <button className="tab-tool ghost" onClick={resetLayout}>Default</button>}
           <button
             className="tab-tool"
             onClick={() => setScienceMode((prev) => !prev)}
           >
-            {scienceMode ? 'Ana Ekran' : 'Science Ekrani'}
+            {scienceMode ? 'Ana Ekran' : 'Science Panel'}
           </button>
         </div>
 
