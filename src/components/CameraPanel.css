@@ -4,6 +4,208 @@
   align-items: center;
 }
 
+.camera-workspace {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.camera-sidebar,
+.camera-main {
+  min-height: 0;
+}
+
+.camera-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.camera-status-card,
+.camera-selector-block,
+.photo-gallery {
+  border: 1px solid rgba(34, 211, 238, 0.18);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(6, 16, 24, 0.92), rgba(7, 22, 35, 0.84));
+}
+
+.camera-status-card {
+  padding: 14px;
+}
+
+.camera-status-topline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: #d8f3ff;
+  font-weight: 700;
+}
+
+.camera-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.16);
+}
+
+.camera-status-dot.online {
+  background: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.16);
+}
+
+.camera-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.camera-status-item {
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(10, 29, 42, 0.72);
+  border: 1px solid rgba(34, 211, 238, 0.14);
+}
+
+.camera-status-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #7fb2c9;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.camera-status-item strong {
+  color: #f2fbff;
+  font-size: 14px;
+}
+
+.camera-selector-block {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.camera-option {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  background: rgba(6, 16, 24, 0.82);
+  color: #cde6f7;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.camera-option:hover {
+  transform: translateY(-1px);
+  border-color: rgba(61, 217, 235, 0.45);
+}
+
+.camera-option.active {
+  border-color: rgba(143, 255, 156, 0.7);
+  box-shadow: 0 0 0 1px rgba(143, 255, 156, 0.28);
+}
+
+.camera-option-label,
+.camera-option-topic {
+  display: block;
+}
+
+.camera-option-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.camera-option-label {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #f4fbff;
+}
+
+.camera-option-resolution {
+  color: #9ceca8;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.camera-option-role {
+  display: block;
+  margin-bottom: 6px;
+  color: #d2e7f2;
+  font-size: 12px;
+}
+
+.camera-option-topic {
+  font-size: 11px;
+  color: #7fb2c9;
+  word-break: break-word;
+}
+
+.camera-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.camera-meta-label {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7fb2c9;
+  margin-bottom: 6px;
+}
+
+.camera-meta-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f2fbff;
+  margin-bottom: 8px;
+}
+
+.camera-meta-topic {
+  font-size: 12px;
+  color: #9ceca8;
+  word-break: break-word;
+}
+
+.camera-stage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(34, 211, 238, 0.18);
+  background: linear-gradient(180deg, rgba(6, 16, 24, 0.92), rgba(7, 22, 35, 0.84));
+}
+
+.camera-stage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.camera-stage-chip {
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(34, 211, 238, 0.18);
+  background: rgba(8, 24, 34, 0.72);
+  color: #d8f3ff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .capture-button {
   padding: 8px 14px;
   background: rgba(7, 42, 25, 0.92);
@@ -24,31 +226,53 @@
   opacity: 0.45;
   cursor: not-allowed;
 }
-.camera-video-container {
+
+.camera-view {
   width: 100%;
-  aspect-ratio: 4/3;
-  max-height: 60vh;
+  flex: 1;
+  min-height: 320px;
   background: linear-gradient(180deg, #08131f 0%, #0b1a28 100%);
   border: 1px solid rgba(34, 211, 238, 0.28);
-  border-radius: 10px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  position: relative;  /* ← Bu önemli (overlay'ler için) */
-  margin-bottom: 15px;
+  position: relative;
   flex-shrink: 0;
-}
-.camera-video {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;  /* Video oranını koru */
 }
 
 .camera-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.camera-overlay {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.camera-badge,
+.camera-topic-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(6, 16, 24, 0.8);
+  border: 1px solid rgba(34, 211, 238, 0.24);
+  color: #f2fbff;
+  font-size: 12px;
+}
+
+.camera-topic-badge {
+  color: #9ceca8;
 }
 
 .camera-loading,
@@ -70,36 +294,7 @@
   opacity: 0.55;
   animation: blink 2s infinite;
 }
-.loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(180deg, #08131f 0%, #0b1a28 100%);
-  color: #22d3ee;
-  z-index: 5;
-}
 
-.spinner {
-  border: 4px solid rgba(34, 211, 238, 0.2);
-  border-top: 4px solid #22d3ee;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 16px;
-}
-
-.loading-overlay p {
-  color: #22d3ee;
-  font-size: 14px;
-  margin: 8px 0;
-}
 @keyframes blink {
   0%,
   100% { opacity: 0.55; }
@@ -121,20 +316,34 @@
 }
 
 .photo-gallery {
-  margin-top: 15px;
+  padding: 12px;
   flex-shrink: 0;
+}
+
+.gallery-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
 .gallery-header {
   font-weight: 700;
-  margin-bottom: 10px;
   color: #8df89e;
+}
+
+.gallery-subtitle {
+  color: #7fb2c9;
+  font-size: 12px;
 }
 
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 10px;
+  max-height: 180px;
+  overflow-y: auto;
 }
 
 .photo-item {
@@ -147,13 +356,31 @@
 }
 
 .photo-item:hover {
-  transform: scale(1.04);
+  transform: translateY(-2px);
+}
+
+.photo-item.active {
+  border-color: rgba(143, 255, 156, 0.65);
+  box-shadow: 0 0 0 1px rgba(143, 255, 156, 0.2);
 }
 
 .photo-item img {
   width: 100%;
-  height: 70px;
+  height: 90px;
   object-fit: cover;
+}
+
+.photo-camera-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 4px 6px;
+  background: rgba(6, 16, 24, 0.76);
+  color: #f2fbff;
+  font-size: 10px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .photo-timestamp {
@@ -168,6 +395,18 @@
   text-align: center;
 }
 
+.empty-gallery {
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px dashed rgba(34, 211, 238, 0.24);
+  color: #85b1cc;
+  text-align: center;
+}
+
 body[data-theme='light'] .capture-button {
   background: rgba(227, 240, 230, 0.95);
   color: #1f5939;
@@ -178,9 +417,83 @@ body[data-theme='light'] .capture-button:hover:not(:disabled) {
   box-shadow: 0 0 10px rgba(45, 108, 68, 0.2);
 }
 
+body[data-theme='light'] .camera-option {
+  background: rgba(250, 250, 248, 0.95);
+  border-color: rgba(79, 85, 99, 0.18);
+  color: #3c4655;
+}
+
+body[data-theme='light'] .camera-status-card,
+body[data-theme='light'] .camera-selector-block,
+body[data-theme='light'] .camera-stage-header,
+body[data-theme='light'] .photo-gallery {
+  background: linear-gradient(180deg, rgba(250, 250, 248, 0.96), rgba(241, 240, 234, 0.96));
+  border-color: rgba(79, 85, 99, 0.18);
+}
+
+body[data-theme='light'] .camera-status-topline,
+body[data-theme='light'] .camera-stage-chip,
+body[data-theme='light'] .camera-option-role {
+  color: #2f3947;
+}
+
+body[data-theme='light'] .camera-status-item {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(79, 85, 99, 0.14);
+}
+
+body[data-theme='light'] .camera-status-item strong {
+  color: #111827;
+}
+
+body[data-theme='light'] .camera-option-label,
+body[data-theme='light'] .camera-badge {
+  color: #1f2937;
+}
+
+body[data-theme='light'] .camera-option-topic {
+  color: #556274;
+}
+
+body[data-theme='light'] .camera-option.active {
+  border-color: rgba(45, 108, 68, 0.42);
+  box-shadow: 0 0 0 1px rgba(45, 108, 68, 0.18);
+}
+
+body[data-theme='light'] .camera-meta {
+  background: rgba(250, 250, 248, 0.96);
+  border-color: rgba(79, 85, 99, 0.18);
+}
+
+body[data-theme='light'] .camera-meta-label {
+  color: #6b7280;
+}
+
+body[data-theme='light'] .camera-meta-value {
+  color: #111827;
+}
+
+body[data-theme='light'] .camera-meta-topic,
+body[data-theme='light'] .camera-topic-badge {
+  color: #1f5939;
+}
+
 body[data-theme='light'] .camera-view {
   background: linear-gradient(180deg, #ecebe5 0%, #dcdacc 100%);
   border-color: rgba(79, 85, 99, 0.24);
+}
+
+body[data-theme='light'] .camera-badge,
+body[data-theme='light'] .camera-topic-badge,
+body[data-theme='light'] .photo-camera-label {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(79, 85, 99, 0.18);
+}
+
+body[data-theme='light'] .gallery-subtitle,
+body[data-theme='light'] .empty-gallery,
+body[data-theme='light'] .camera-status-label {
+  color: #556274;
 }
 
 body[data-theme='light'] .camera-loading,
@@ -205,8 +518,29 @@ body[data-theme='light'] .photo-timestamp {
   color: #f2f2f2;
 }
 
+@media (max-width: 980px) {
+  .camera-workspace {
+    grid-template-columns: 1fr;
+  }
 
-body[data-theme='light'] .photo-timestamp {
-  background: rgba(48, 53, 67, 0.82);
-  color: #f2f2f2;
+  .camera-status-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .camera-status-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .camera-overlay {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .camera-stage-header,
+  .gallery-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
