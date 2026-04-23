@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, use } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ROSLIB from 'roslib';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import './SciencePanel.css';
@@ -32,7 +32,7 @@ function SciencePanel({ rosConnected, ros }) {
   // sensorConfig'i useMemo ile sarmalayarak her render'da yeniden oluşmasını engelle
   const sensorConfig = useMemo(() => ({
     temperature: { 
-      name: 'Sıcaklık', 
+      name: 'Temperature', 
       unit: '°C', 
       color: '#ff6384', 
       min: 0, 
@@ -41,7 +41,7 @@ function SciencePanel({ rosConnected, ros }) {
       messageType: 'sensor_msgs/Temperature'
     },
     nemval1: { 
-      name: 'Nem 1', 
+      name: 'Humidity 1', 
       unit: '%', 
       color: '#36a2eb', 
       min: 0, 
@@ -51,7 +51,7 @@ function SciencePanel({ rosConnected, ros }) {
       
     },
     nemval2: { 
-      name: 'Nem 2', 
+      name: 'Humidity 2', 
       unit: '%', 
       color: '#4bc0c0', 
       min: 0, 
@@ -61,7 +61,7 @@ function SciencePanel({ rosConnected, ros }) {
       
     },
     
-    /*pressure: { 
+    pressure: { 
       name: 'Basınç', 
       unit: 'hPa', 
       color: '#4bc0c0', 
@@ -69,7 +69,7 @@ function SciencePanel({ rosConnected, ros }) {
       max: 1100, 
       topic: '/sensor/pressure',
       messageType: 'sensor_msgs/FluidPressure'
-    },*/
+    },
     co2: { 
       name: 'CO₂', 
       unit: 'ppm', 
@@ -153,13 +153,7 @@ function SciencePanel({ rosConnected, ros }) {
       });
       //ıt reuses the same ROSLIB.Topic constructor to create a listener for each sensor based on its topic and message type defined in sensorConfig.
       // Gelen mesajları işlemek için subscribe olur. Her sensör için Ros Topic Listener oluşturulur. Bu bir Websocket bağlantısıdır ve ROS'dan gelen verileri dinler. Gelen mesajlar, sensörün türüne göre işlenir ve currentReadings state'ine kaydedilir.
-/*new ROSLIB.Ros()
-    → creates a native browser WebSocket object
-    → calls new WebSocket('ws://192.168.1.100:9090')
-    → starts listening for open/close/error/message events
-    → fires ros.on('connection', ...) when handshake succeeds
-    → fires ros.on('error', ...)    when something breaks
-    → fires ros.on('close', ...)    when disconnected*/
+
       listener.subscribe((message) => {
         let values = {};
         //subscribe fonksiyonu, ROS topic'inden gelen mesajları dinler ve her yeni mesaj geldiğinde çalışır. Gelen mesajın türüne göre (örneğin sıcaklık, nem, basınç) ilgili değeri çıkarır ve currentReadings state'ini günceller. Böylece, bileşen her zaman sensörlerin en son değerlerini gösterir.
@@ -215,7 +209,7 @@ function SciencePanel({ rosConnected, ros }) {
       Object.values(listeners).forEach(listener => listener.unsubscribe());
       clearInterval(dataInterval);
     };
-  }, [rosConnected, ros, sensorConfig]); // ✅ Artık sensorConfig dahil
+  }, [rosConnected, ros, sensorConfig]); // Artık sensorConfig dahil
   // clenaup function'ı, bileşen unmount olduğunda veya rosConnected/ros/sensorConfig değiştiğinde çalışır. ROS topic aboneliklerini iptal eder ve veri kaydetme interval'ini temizler.
   useEffect(() => {
     if (!rosConnected || !ros) return;
@@ -277,9 +271,9 @@ function SciencePanel({ rosConnected, ros }) {
   return (
     <div className="science-panel-container">
       <div className="science-header">
-        <h2>BİLİMSEL ÖLÇÜM PANELİ</h2>
+        <h2>SCIENCE PANEL</h2>
         <button onClick={exportData} className="export-button" disabled={sensorData.length === 0}>
-          📊 Verileri Dışa Aktar
+          📊 Export Data
         </button>
       </div>
 
@@ -304,7 +298,7 @@ function SciencePanel({ rosConnected, ros }) {
       {/* Grafik */}
       <div className="chart-container">
         <div className="chart-header">
-          <h3>Zaman Serisi Grafiği</h3>
+          <h3>Time Series Graph</h3>
           <div className="chart-legend">
             {selectedSensors.map(sensor => {
               const config = sensorConfig[sensor];
@@ -351,19 +345,19 @@ function SciencePanel({ rosConnected, ros }) {
           </ResponsiveContainer>
         ) : (
           <div className="no-data">
-            {rosConnected ? 'Veri toplanıyor...' : 'ROS Bağlantısı Bekleniyor...'}
+            {rosConnected ? 'Gathering Data...' : 'Waiting For Ros Connection...'}
           </div>
         )}
       </div>
 
       {/* Veri Tablosu */}
       <div className="data-table-container">
-        <h3>Ölçüm Verileri</h3>
+        <h3>Measured Data</h3>
         <div className="data-table">
           <table>
             <thead>
               <tr>
-                <th>Zaman</th>
+                <th>Time</th>
                 {selectedSensors.map(sensor => (
                   <th key={sensor}>{sensorConfig[sensor].name} ({sensorConfig[sensor].unit})</th>
                 ))}
@@ -385,9 +379,6 @@ function SciencePanel({ rosConnected, ros }) {
     </div>
   );
 }
-
-
-export default SciencePanel;
 
 
 export default SciencePanel;
