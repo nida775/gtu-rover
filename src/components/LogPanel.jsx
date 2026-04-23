@@ -19,7 +19,7 @@ function LogPanel({ rosConnected, ros }) {
 
   useEffect(() => {
     // Başlangıç logları
-    addLog('Sistem başlatılıyor...', 'info');
+    addLog('Starting the system...', 'info');
   }, []);
 
   useEffect(() => {
@@ -84,13 +84,13 @@ function LogPanel({ rosConnected, ros }) {
   return (
     <div className="panel log-panel">
       <div className="panel-header">
-        <span>SİSTEM LOGLARI</span>
+        <span>SYSTEM LOGS</span>
       </div>
       
       <div className="panel-content">
         <div className="log-container">
           {(logs || []).length === 0 ? (
-            <div className="no-logs">Henüz log kaydı yok</div>
+            <div className="no-logs">No logs recorded yet.</div>
           ) : (
             (logs || []).map(log => (
               <div key={log.id} className={`log-entry log-${log.type}`}>
