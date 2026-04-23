@@ -41,10 +41,10 @@ function MapPanel({ rosConnected,ros }) {
   return (
     <div className="panel map-panel">
       <div className="panel-header">
-        HARİTA & SENSÖRLER
+        MAP & SENSORS
         <div className="connection-status">
           <div className={`status-dot ${rosConnected ? 'connected' : 'disconnected'}`}></div>
-          <span>{rosConnected ? 'Bağlı' : 'Bağlı Değil'}</span>
+          <span>{rosConnected ? 'Connected' : 'Disconnected'}</span>
         </div>
       </div>
       
