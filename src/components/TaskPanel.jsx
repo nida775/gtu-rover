@@ -3,11 +3,11 @@ import './TaskPanel.css';
 
 function TaskPanel() {
   const [tasks, setTasks] = useState([
-    { id: 1, text: 'GPS konumu doğrula', completed: true },
-    { id: 2, text: 'Kamera kalibrasyonu', completed: true },
-    { id: 3, text: 'Sensör verilerini kontrol et', completed: false },
-    { id: 4, text: 'Otonom sürüş testi', completed: false },
-    { id: 5, text: 'Veri toplama başlat', completed: false }
+    { id: 1, text: 'Verify GPS location', completed: true },
+    { id: 2, text: 'Calibration of camera', completed: true },
+    { id: 3, text: 'Check sensor data', completed: false },
+    { id: 4, text: 'Autonomous driving test', completed: false },
+    { id: 5, text: 'Start the data gathering', completed: false }
   ]);
   
   const [newTaskText, setNewTaskText] = useState('');
@@ -59,14 +59,14 @@ function TaskPanel() {
   return (
     <div className="panel task-panel">
       <div className="panel-header">
-        GÖREVLER
+        TASKS
       </div>
       
       <div className="panel-content">
         {/* Zaman Sayacı */}
         <div className="timer-section">
           <div className="timer-display">{formatTime(missionTime)}</div>
-          <div className="timer-label">Görev Süresi</div>
+          <div className="timer-label">Duration of Tasks</div>
           <div className="timer-controls">
             <button 
               className="timer-button start"
@@ -94,7 +94,7 @@ function TaskPanel() {
         {/* İlerleme Çubuğu */}
         <div className="progress-section">
           <div className="progress-header">
-            <span>İlerleme</span>
+            <span>Progress</span>
             <span>{completedCount}/{tasks.length}</span>
           </div>
           <div className="progress-bar-bg">
@@ -110,7 +110,7 @@ function TaskPanel() {
           <div className="add-task-form">
             <input
               type="text"
-              placeholder="Yeni görev ekle..."
+              placeholder="Add a new task..."
               value={newTaskText}
               onChange={(e) => setNewTaskText(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && addTask()}
@@ -121,7 +121,7 @@ function TaskPanel() {
 
           <div className="task-list">
             {tasks.length === 0 ? (
-              <div className="no-tasks">Henüz görev yok</div>
+              <div className="no-tasks">No task yet.</div>
             ) : (
               tasks.map(task => (
                 <div key={task.id} className={`task-item ${task.completed ? 'completed' : ''}`}>
